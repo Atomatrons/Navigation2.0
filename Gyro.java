@@ -29,7 +29,7 @@ public class Gyro {
     public void init(ShivaRobot robot)
     {
         this.telemetry = robot.telemetry;
-        setGyro(robot.imu);
+        this.imu = robot.imu;
 
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
 
@@ -41,14 +41,11 @@ public class Gyro {
         imu.initialize(parameters);
     }
 
-    public void setGyro(BNO055IMU newImu)
-    {
-        imu = newImu;
-    }
-
     // Return current heading of robot relative to where it was pointing at init() time.
     // Range is -180 - 180
     public double getCurrentAngle() {
+        // Change the AxesOrder to one of the values listed here to account for the orientation in which the Gyro is mounted on the robot:
+        // See: https://first-tech-challenge.github.io/SkyStone/org/firstinspires/ftc/robotcore/external/navigation/AxesOrder.html
         angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
 
         globalAngle = angles.firstAngle;
@@ -67,6 +64,8 @@ public class Gyro {
             return;
             
         this.telemetry.addData("GYRO: First Angle ", angles.firstAngle);
+        this.telemetry.addData("GYRO: Second Angle ", angles.secondAngle);
+        this.telemetry.addData("GYRO: Third Angle ", angles.thirdAngle);
         this.telemetry.addData("GYRO: Global Angle ", globalAngle);
         this.telemetry.update();
     }
