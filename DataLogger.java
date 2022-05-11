@@ -69,6 +69,10 @@ import java.io.File;                    // already used in FTC SDK
 import java.io.Writer;
 import java.io.IOException;
 import java.io.FileWriter;              // subclass of java.io.Writer
+import java.io.PrintWriter;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;              
 
 public class DataLogger {
     
@@ -256,11 +260,11 @@ public class DataLogger {
     private int getLastUsedSerialNumber() {
         String filePathName = serialNumberFileName();
 
-        Path filePath = Path.of(filePathName);
+        //Path filePath = Paths.get(filePathName);
         String fileContent = "";
         try
         {
-            byte[] bytes = Files.readAllBytes(Paths.get(filePath));
+            byte[] bytes = Files.readAllBytes(Paths.get(filePathName));
             fileContent = new String(bytes);
         } 
         catch (IOException e) 
@@ -275,6 +279,10 @@ public class DataLogger {
         String filePathName = serialNumberFileName();
         try (PrintWriter out = new PrintWriter(filePathName)) {
             out.println(String.valueOf(lastUsedSerialNumber));
+        }
+        catch (IOException e)
+        {
+            return;
         }
     }
 

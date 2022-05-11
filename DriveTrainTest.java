@@ -27,7 +27,7 @@ public class DriveTrainTest extends LinearOpMode {
    * Repeatedly test and report the alliance detected by the ShivaAlliance class
    */
   @Override
-  public void runOpMode() {
+  public void runOpMode() throws InterruptedException{
     // Initialize the robot interface
     robot.init(telemetry, hardwareMap);
     gyro.init(robot);
@@ -43,9 +43,9 @@ public class DriveTrainTest extends LinearOpMode {
       drivetrain.strafeRight(3.0, 0.5);
       drivetrain.strafeLeft(3.0, 0.5);
       
-      drivetrain.turn(-90.0, 0.5);
-      drivetrain.turn(90.0, 0.5);
-      drivetrain.turn(0.0, 0.5);
+      drivetrain.turn(-90.0f, 0.5f);
+      drivetrain.turn(90.0f, 0.5f);
+      drivetrain.turn(0.0f, 0.5f);
     }
   }
 }

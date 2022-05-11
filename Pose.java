@@ -1,3 +1,5 @@
+package org.firstinspires.ftc.teamcode;
+
 public class Pose
 {
     //Pose class stores an X position, Y position, and Orientation

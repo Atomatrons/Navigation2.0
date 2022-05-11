@@ -1,3 +1,5 @@
+package org.firstinspires.ftc.teamcode; 
+
 public class Navigation{
     //Navigation class tells the Robot to move to a specific Pose, using a specific Path
 
