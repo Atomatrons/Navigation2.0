@@ -13,6 +13,9 @@ import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 import com.qualcomm.robotcore.hardware.SwitchableLight;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
+import org.firstinspires.ftc.teamcode.navigation.DriveTrain;
+import org.firstinspires.ftc.teamcode.navigation.Gyro;
+
 /**
  * This op-mode tests the Alliance classes
  */

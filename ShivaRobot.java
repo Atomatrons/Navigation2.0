@@ -46,13 +46,15 @@ public class ShivaRobot {
     private ElapsedTime period = new ElapsedTime();
 
     // To allow non OpMode classes to display info to telemetry:
-    Telemetry telemetry;
+    public Telemetry telemetry;
 
     /* Constructor */
     public ShivaRobot() {}
 
     /* Initialize standard Hardware interfaces */
     public void init(Telemetry telemetry, HardwareMap hardwareMap) {
+        this.telemetry = telemetry;
+        
         // Wheel motors
         front_left = hardwareMap.get(DcMotor.class, "front_left");
         back_left = hardwareMap.get(DcMotor.class, "back_left");
@@ -61,7 +63,7 @@ public class ShivaRobot {
 
         // Dead wheel encoders
         x_encoder = hardwareMap.get(DcMotor.class, "x_encoder");
-        y_encoder = hardwareMap.get(DcMotor.class, "y_encoder");
+        y_encoder = x_encoder; // hardwareMap.get(DcMotor.class, "y_encoder");
 
         // Slides motors
         slides_motor = hardwareMap.get(DcMotor.class, "slides");
@@ -77,7 +79,7 @@ public class ShivaRobot {
         // It's recommended to use NormalizedColorSensor over ColorSensor, because
         // NormalizedColorSensor consistently gives values between 0 and 1, while
         // the values you get from ColorSensor are dependent on the specific sensor you're using.
-        allianceColorSensor = hardwareMap.get(NormalizedColorSensor.class, "colorsenv3");
+        allianceColorSensor = hardwareMap.get(NormalizedColorSensor.class, "alliance_sensor");
 
         // Reverse the direction of the right side motors,
         // so power with the same sing (+ or -) causes the robot to move in the same direction,
