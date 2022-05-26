@@ -61,8 +61,13 @@ public class ShivaAlliance {
 		Color.colorToHSV(colors.toColor(), hsvValues);
 
 		this.displayInfo(robot, colors);
-
-		return Alliance.RED;
+		float hue = hsvValues[0];
+		if (hue < 120) {
+			return Alliance.RED;
+		}
+		else {
+			return Alliance.BLUE;
+		}
 	}
 
 	// Display info about the color sensor to the Driver Station
@@ -83,7 +88,5 @@ public class ShivaAlliance {
 		if (robot.allianceColorSensor instanceof DistanceSensor) {
 			robot.telemetry.addData("Distance (cm)", "%.3f", ((DistanceSensor) robot.allianceColorSensor).getDistance(DistanceUnit.CM));
 		}
-
-		robot.telemetry.update();
 	}
 }

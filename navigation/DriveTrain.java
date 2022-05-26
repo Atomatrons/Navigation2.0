@@ -52,7 +52,7 @@ public class DriveTrain {
         startMovement(rotationsToSpin, power);
                 
         // While the robot is moving, use the gyro to help it move in a stright line
-        while(front_left.isBusy())
+        while(back_left.isBusy())
         {
             adjust(-getCorrectionAngle(startAngle), (float)power);
         }
@@ -101,7 +101,7 @@ public class DriveTrain {
         startMovement(rotationsToSpin, power);
         
         // Wait for the robot to reach its destination
-        while(front_left.isBusy())
+        while(back_left.isBusy())
         {
                 
         }
@@ -125,7 +125,7 @@ public class DriveTrain {
         startMovement(rotationsToSpin, power);
         
         // Wait for the robot to reach its destination
-        while(front_left.isBusy())
+        while(back_left.isBusy())
         {
                 
         }
