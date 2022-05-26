@@ -8,7 +8,11 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-@TeleOp(name = "DriveHard", group = "Atomobot v2")
+/**
+ * This op-mode runs the robot during the Driver Controlled Period.
+ * It allows the robot to be driven, and for all the attachments to be controlled.
+ */
+@TeleOp(name = "DriveHard", group = "Production")
 public class DriveHard extends OpMode{
     private ElapsedTime runtime = new ElapsedTime();
     
@@ -25,15 +29,14 @@ public class DriveHard extends OpMode{
 
     public void loop() {
         drive();
+        duckSpinner();
+        slides();
+
         telemetry();
     }
 
-    //                                     *****SUBSYSTEMS*****
-
-    // DRIVE
-    public void drive() {
-        robot.slides_motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        
+    // Move the robot
+    private void drive() {
         // Mecanum drive is controlled with three axes: drive (front-and-back),
         // strafe (left-and-right), and twist (rotating the whole chassis).
         double drive  = gamepad1.left_stick_y;
@@ -65,7 +68,7 @@ public class DriveHard extends OpMode{
         };
 
 
-        //Normalizes values
+        // Normalizes values
         double max = Math.abs(speeds[0]);
         for(int i = 1; i < speeds.length; i++) {
             if ( max < Math.abs(speeds[i]) ) max = Math.abs(speeds[i]);
@@ -90,14 +93,22 @@ public class DriveHard extends OpMode{
         robot.front_right.setPower(speeds[1]);
         robot.back_left.setPower(speeds[2]);
         robot.back_right.setPower(speeds[3]);
-
-        robot.duck_motor.setPower(gamepad2.right_trigger);
-        robot.duck_motor.setPower(-gamepad2.left_trigger);
         
         robot.front_left.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         robot.back_left.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         robot.front_right.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         robot.back_right.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+    }
+
+    // Handle Duck Spinner controls
+    private void duckSpinner() {
+        robot.duck_motor.setPower(gamepad2.right_trigger);
+        robot.duck_motor.setPower(-gamepad2.left_trigger);
+    }
+
+    // Move the slides up and down and spin the intake motor
+    private void slides() {
+        robot.slides_motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         if(gamepad2.right_stick_y > 0 && robot.slides_motor.getCurrentPosition() <= 0) 
         {
@@ -113,11 +124,11 @@ public class DriveHard extends OpMode{
             robot.slides_motor.setPower(0);
         }
         
-        robot.intake_spinner.setPower(gamepad2.left_stick_y);
+        robot.intake_spinner.setPower(gamepad2.left_stick_y);        
     }
 
-    // TELEMETRY
-    public void telemetry() {
+    // Display info on the driver station
+    private void telemetry() {
         telemetry.addData("Running", "Loop");
         telemetry.addData("Status", "Run Time: " + runtime.toString());
         
