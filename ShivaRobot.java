@@ -62,8 +62,8 @@ public class ShivaRobot {
         front_right = hardwareMap.get(DcMotor.class, "front_right");
 
         // Dead wheel encoders
-        x_encoder = hardwareMap.get(DcMotor.class, "x_encoder");
-        y_encoder = x_encoder; // hardwareMap.get(DcMotor.class, "y_encoder");
+        x_encoder = hardwareMap.get(DcMotor.class, "back_right");
+        y_encoder = hardwareMap.get(DcMotor.class, "front_right");
 
         // Slides motors
         slides_motor = hardwareMap.get(DcMotor.class, "slides");
