@@ -17,7 +17,9 @@ public class GPS{
     }
 
     public Pose getCurrentPose(){
-        return new Pose((double)robot.x_encoder.getCurrentPosition(), 
-            (double)robot.y_encoder.getCurrentPosition(), (int)gyro.getCurrentAngle());
+        return new Pose(
+            (double)robot.x_encoder.getCurrentPosition(), 
+            (double)robot.y_encoder.getCurrentPosition(),
+            (int)gyro.getCurrentAngle());
     }
 }

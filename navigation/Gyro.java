@@ -21,6 +21,7 @@ public class Gyro {
     double thirdAngle = 0;
     private Telemetry telemetry = null;
     private int count = 0;
+    public boolean quietMode = false;
     
     public boolean isTurningLeft = false;
     
@@ -62,7 +63,7 @@ public class Gyro {
     }
 
     private void displayInfo() {
-        if (this.telemetry == null)
+        if (this.telemetry == null || this.quietMode == true)
             return;
             
         this.telemetry.addData("GYRO: First Angle ", angles.firstAngle);

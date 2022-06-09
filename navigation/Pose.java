@@ -21,5 +21,4 @@ public class Pose
         this.y = y;
         this.orientation = orientation;
     }
-
 }
