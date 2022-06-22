@@ -61,6 +61,12 @@ public class ShivaRobot {
         back_right = hardwareMap.get(DcMotor.class, "back_right");
         front_right = hardwareMap.get(DcMotor.class, "front_right");
 
+        // Set Motors to not use encoders
+        front_left.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        back_left.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        front_right.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        back_right.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
         // Dead wheel encoders; set current position to 0,0
         x_encoder = hardwareMap.get(DcMotorEx.class, "front_right");
         y_encoder = hardwareMap.get(DcMotorEx.class, "back_right");

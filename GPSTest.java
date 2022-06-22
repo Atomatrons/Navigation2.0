@@ -30,7 +30,7 @@ public class GPSTest extends LinearOpMode {
 
     ShivaRobot robot = new ShivaRobot();
     Gyro gyro = new Gyro();
-    //DriveTrain drivetrain = new DriveTrain();
+    DriveTrain drivetrain = new DriveTrain();
     GPS gps = new GPS();
 
     /**
@@ -43,7 +43,7 @@ public class GPSTest extends LinearOpMode {
         gyro.init(robot);
         gyro.quietMode = true;      // turn off telemetry
         gps.init(robot, gyro);
-        //drivetrain.init(robot, gyro);
+        drivetrain.init(robot, gyro);
 
         //robot.back_right.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         //robot.back_right.setTargetPosition(4190 * 2);
@@ -68,8 +68,8 @@ public class GPSTest extends LinearOpMode {
     }
 
     private void test_setPowerAndUseDeadwheel() {
-        setZeroPowerBehavior();
-        displayZeroPowerBehavior();
+        // setZeroPowerBehavior();
+        // displayZeroPowerBehavior();
 
         robot.front_left.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         robot.back_left.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);

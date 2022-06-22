@@ -31,30 +31,34 @@ public class DriveTrain {
     {
         // Save values as instance variables
         gyro = newGyro;
+        gyro.quietMode = true;
         telemetry = robot.telemetry;
         front_left  = robot.front_left;
         front_right = robot.front_right;
         back_left   = robot.back_left;
         back_right  = robot.back_right;
         x_encoder = robot.x_encoder;
-        y_encoder = robot.x_encoder;
+        y_encoder = robot.y_encoder;
 
         setZeroPowerBehavior();
         
         // Initialize the motors to run without encoders
-        reset();
+        //reset();
     }
     
     // Move the robot forward the specified rotations, at the specified power
     // Power must be a value from -1.0 to 1.0
     // The gyro is used to help the robot drive straight
     public void forward(double rotationsToSpin, double power)
-    {
-        // Get the robot's current heading, and compute the number of ticks needed to move
-        float startAngle = (float)gyro.getCurrentAngle();
-
+    {   
         // Compute how many ticks we need the dead wheel to spin
         int target_position = (int) Math.round(ShivaRobot.DEAD_WHEEL_TICKS * rotationsToSpin);
+
+        telemetry.addData("Y Encoder Target Position: ", target_position);        
+        telemetry.addData("Y Encoder Position: ", y_encoder.getCurrentPosition());
+
+        // Get the robot's current heading, and compute the number of ticks needed to move
+        float startAngle = (float)gyro.getCurrentAngle();
         
         // Set the wheels so we move forwards
         front_left.setDirection(DcMotorSimple.Direction.FORWARD);
@@ -64,15 +68,13 @@ public class DriveTrain {
 
         // Start the robot moving.
         //  The robot will stop moving when the wheels turn the specified number of rotations
-        startMovement(rotationsToSpin, power);
-        
-        telemetry.addData("X Encoder Target Position: ", target_position);        
-        telemetry.addData("X Encoder Position: ", x_encoder.getCurrentPosition());
+        startMovement(rotationsToSpin, power);    
 
         // While the robot is moving, use the gyro to help it move in a stright line
-        while(x_encoder.getCurrentPosition() <= target_position)
+        while(y_encoder.getCurrentPosition() <= target_position)
         {
             adjust(-getCorrectionAngle(startAngle), (float)power);
+            telemetry.update();
         }
         
         // Stop robot
@@ -209,8 +211,6 @@ public class DriveTrain {
         back_left.setPower(0);
         front_right.setPower(0);
         back_right.setPower(0);
-        x_encoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        y_encoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
     
     public void reset()
@@ -219,8 +219,6 @@ public class DriveTrain {
         back_left.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         front_right.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         back_right.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        x_encoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        y_encoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
 
     // Move the robot the specified rotations, at the specified power
