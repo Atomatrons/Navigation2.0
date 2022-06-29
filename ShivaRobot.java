@@ -67,20 +67,20 @@ public class ShivaRobot {
         front_right.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         back_right.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        // Dead wheel encoders; set current position to 0,0
-        x_encoder = hardwareMap.get(DcMotorEx.class, "front_right");
-        y_encoder = hardwareMap.get(DcMotorEx.class, "back_right");
-        x_encoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        y_encoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        x_encoder.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        y_encoder.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
         // Slides motors
         slides_motor = hardwareMap.get(DcMotor.class, "slides");
         intake_spinner = hardwareMap.get(DcMotor.class, "intake_spinner");
 
         // Duck motors
         duck_motor = hardwareMap.get(DcMotor.class, "duck");
+
+         // Dead wheel encoders; set current position to 0,0
+        x_encoder = back_left;
+        y_encoder = front_left;
+        x_encoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        y_encoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        x_encoder.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        y_encoder.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         // Gyro
         imu = hardwareMap.get(BNO055IMU.class, "imu");
