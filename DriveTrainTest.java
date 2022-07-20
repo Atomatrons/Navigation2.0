@@ -40,8 +40,15 @@ public class DriveTrainTest extends LinearOpMode {
     waitForStart();
 
     // Drive the robot a short distance forward, backward, left, and right, and then turn 180 in each direction.
-
-    drivetrain.backward(2, 0.3);
+    drivetrain.forward(1, 0.3);
+    sleep(1000);
+    drivetrain.backward(1, 0.3);
+    sleep(1000);
+    drivetrain.turn(90, 0.3);
+    sleep(1000);
+    drivetrain.turn(0, 0.3);
+    sleep(1000);
+    drivetrain.turn(-90, 0.3);
 
     while (opModeIsActive()) {
 
