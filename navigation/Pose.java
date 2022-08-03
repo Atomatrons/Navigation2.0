@@ -9,7 +9,6 @@ public class Pose
     public Double y;
     public Integer orientation; 
 
-
     public Pose(Double x, Double y, Integer orientation){
         this.x = x;
         this.y = y;

@@ -77,10 +77,6 @@ public class ShivaRobot {
          // Dead wheel encoders; set current position to 0,0
          x_encoder = back_left;
          y_encoder = front_left;
-        // x_encoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        // y_encoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        // x_encoder.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        // y_encoder.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         // Gyro
         imu = hardwareMap.get(BNO055IMU.class, "imu");

@@ -4,13 +4,18 @@ public class Navigation {
     //Navigation class tells the Robot to move to a specific Pose, using a specific Path
 
     private Pose startPose = null;
+    private DriveTrain driveTrain = null;
     
-    public void init(Pose currentPose){
+    public void init(Pose currentPose, DriveTrain driveTrain){
         setStartPose(currentPose);
+        this.driveTrain = drivetrain;
     }
 
     public void goToPose(Pose endPose, Path chosenPath){
-        //To be implemented
+        chosenPath.endPose = endPose;
+        chosenPath.driveTrain = driveTrain;
+
+        chosenPath.move(); 
     }
 
     //Pass in currentPose from OpMode

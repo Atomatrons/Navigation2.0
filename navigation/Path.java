@@ -1,5 +1,11 @@
 package org.firstinspires.ftc.teamcode.navigation;
 
 public class Path{
-    //To be implemented
+
+    public DriveTrain driveTrain = null;
+    public Pose endPose = null;
+
+    public void move(){
+
+    }
 }
