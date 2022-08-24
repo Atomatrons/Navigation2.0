@@ -8,7 +8,7 @@ public class Navigation {
     
     public void init(Pose currentPose, DriveTrain driveTrain){
         setStartPose(currentPose);
-        this.driveTrain = drivetrain;
+        this.driveTrain = driveTrain;
     }
 
     public void goToPose(Pose endPose, Path chosenPath){
