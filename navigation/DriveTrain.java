@@ -49,9 +49,10 @@ public class DriveTrain {
     // Move the robot forward the specified rotations, at the specified power
     // Power must be a value from -1.0 to 1.0
     // The gyro is used to help the robot drive straight
-    public void forward(double rotationsToSpin, double power)
-    {   
-        // Get the robot's current heading, and compute the number of ticks needed to move
+    public void move(double rotationsToSpin, double power)
+    {  
+        if(rotationsToSpin > 0){
+        // Get the robot's current heading, andcompute the number of ticks needed to move
         float startAngle = (float)gyro.getCurrentAngle();
         
         // Compute how many ticks we need the dead wheel to spin
@@ -81,13 +82,8 @@ public class DriveTrain {
         
         // Stop robot
         stop();
-    }
-    
-    // Move the robot backwards the specified rotations, at the specified power
-    // Power must be a value from -1.0 to 1.0s
-    // The gyro is used to help the robot drive straight
-    public void backward(double rotationsToSpin, double power)
-    {   
+        }
+        else if(rotationsToSpin < 0){
         // Get the robot's current heading, and compute the number of ticks needed to move
         float startAngle = (float)gyro.getCurrentAngle();
         
@@ -98,7 +94,7 @@ public class DriveTrain {
         back_right.setDirection(DcMotorSimple.Direction.FORWARD);
 
         // Compute how many ticks we need the dead wheel to spin
-        int rotationsInTicks = (int) Math.round(ShivaRobot.DEAD_WHEEL_TICKS * rotationsToSpin);
+        int rotationsInTicks = (int) Math.round(ShivaRobot.DEAD_WHEEL_TICKS * Math.abs(rotationsToSpin));
         int initalPosition = y_encoder.getCurrentPosition();
         int targetPosition = initalPosition + rotationsInTicks;
 
@@ -118,13 +114,14 @@ public class DriveTrain {
         
         // Stop robot
         stop();
+        }
     }
-
     // Move the robot sideways to the right the specified rotations, at the specified power
     // Power must be a value from -1.0 to 1.0
     // The gyro is NOT used to help the robot drive straight
-    public void strafeRight(double rotationsToSpin, double power) throws InterruptedException
+    public void strafe(double rotationsToSpin, double power)
     {
+        if(rotationsToSpin > 0){
         // Set the wheels so we move to the right
         front_left.setDirection(DcMotorSimple.Direction.FORWARD);
         back_left.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -148,20 +145,15 @@ public class DriveTrain {
         }
 
         stop();
-    }
-    
-    // Move the robot sideways to the left the specified rotations, at the specified power
-    // Power must be a value from -1.0 to 1.0
-    // The gyro is NOT used to help the robot drive straight
-    public void strafeLeft(double rotationsToSpin, double power) throws InterruptedException
-    {                
+        }
+        else if(rotationsToSpin < 0){
         // Set the wheels so we move to the left
         front_left.setDirection(DcMotorSimple.Direction.REVERSE);
         back_left.setDirection(DcMotorSimple.Direction.FORWARD);
         front_right.setDirection(DcMotorSimple.Direction.REVERSE);
         back_right.setDirection(DcMotorSimple.Direction.FORWARD);
 
-        int rotationsInTicks = (int) Math.round(ShivaRobot.DEAD_WHEEL_TICKS * rotationsToSpin);
+        int rotationsInTicks = (int) Math.round(ShivaRobot.DEAD_WHEEL_TICKS * Math.abs(rotationsToSpin));
         int initalPosition = x_encoder.getCurrentPosition();
         int targetPosition = initalPosition + rotationsInTicks;
         
@@ -178,6 +170,7 @@ public class DriveTrain {
         }
 
         stop();
+        }
     }
     
     // Turn the robot to the specified compass point, using a spin turn

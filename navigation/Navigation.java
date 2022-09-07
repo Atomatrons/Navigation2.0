@@ -6,20 +6,27 @@ public class Navigation {
     private Pose startPose = null;
     private DriveTrain driveTrain = null;
     
-    public void init(Pose currentPose, DriveTrain driveTrain){
-        setStartPose(currentPose);
+    public void init(DriveTrain driveTrain){
         this.driveTrain = driveTrain;
     }
 
-    public void goToPose(Pose endPose, Path chosenPath){
-        chosenPath.endPose = endPose;
-        chosenPath.driveTrain = driveTrain;
+    public void goToPose(Pose endPose, Path chosenPath, double power) {
+        if(chosenPath == Path.XY){
+                driveTrain.strafe(endPose.x, power);
+                driveTrain.move(endPose.y, power);
+                driveTrain.turn(endPose.orientation, power);
+        }
+        else if(chosenPath == Path.YX){
+                driveTrain.move(endPose.x, power);
+                driveTrain.strafe(endPose.y, power);
+                driveTrain.turn(endPose.orientation, power);
+        }
+        else if(chosenPath == Path.DIRECT){
+            double turnAngle = Math.toDegrees(Math.atan2(endPose.x, endPose.y));
+            driveTrain.turn((float)(-90 - turnAngle), power); //find correct angle
 
-        chosenPath.move(); 
-    }
-
-    //Pass in currentPose from OpMode
-    public void setStartPose(Pose currentPose){
-        startPose = currentPose;
+            double vectorMagnitude = Math.hypot(endPose.x, endPose.y);
+            driveTrain.move(vectorMagnitude, power);
+        }
     }
 }

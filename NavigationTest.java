@@ -12,19 +12,23 @@ import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 import com.qualcomm.robotcore.hardware.SwitchableLight;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-
+import org.firstinspires.ftc.teamcode.navigation.Navigation; 
+import org.firstinspires.ftc.teamcode.navigation.Path; 
 import org.firstinspires.ftc.teamcode.navigation.DriveTrain;
 import org.firstinspires.ftc.teamcode.navigation.Gyro;
+import org.firstinspires.ftc.teamcode.navigation.Pose;
+
 
 /**
  * This op-mode tests the Alliance classes
  */
-@Autonomous(name = "DriveTrain Test", group = "Test")
-public class DriveTrainTest extends LinearOpMode {
+@Autonomous(name = "Navigation", group = "Test")
+public class NavigationTest extends LinearOpMode {
 
   ShivaRobot robot = new ShivaRobot();
   Gyro gyro = new Gyro();
-  DriveTrain drivetrain = new DriveTrain();
+  DriveTrain driveTrain = new DriveTrain();
+  Navigation nav = new Navigation();
 
   /**
    * Repeatedly test and report the alliance detected by the ShivaAlliance class
@@ -34,31 +38,17 @@ public class DriveTrainTest extends LinearOpMode {
     // Initialize the robot interface
     robot.init(telemetry, hardwareMap);
     gyro.init(robot);
-    drivetrain.init(robot, gyro);
+    driveTrain.init(robot, gyro);
+    nav.init(driveTrain);
 
     // Wait for the start button to be pressed.
     waitForStart();
 
-    // Drive the robot a short distance forward, backward, left, and right, and then turn 180 in each direction.
-    drivetrain.forward(1, 0.3);
-    sleep(1000);
-    drivetrain.backward(1, 0.3);
-    sleep(1000);
-    drivetrain.turn(90, 0.3);
-    sleep(1000);
-    drivetrain.turn(0, 0.3);
-    sleep(1000);
-    drivetrain.turn(-90, 0.3);
+    Pose endPose = new Pose(4, 5, 60);
+
+    nav.goToPose(endPose, Path.DIRECT, 0.8);
 
     while (opModeIsActive()) {
-
-      // drivetrain.backward(3.0, 0.5);
-      // drivetrain.strafeRight(3.0, 0.5);
-      // drivetrain.strafeLeft(3.0, 0.5);
-      
-      // drivetrain.turn(-90.0f, 0.5f);
-      // drivetrain.turn(90.0f, 0.5f);
-      // drivetrain.turn(0.0f, 0.5f);
 
     }
   }
