@@ -49,7 +49,7 @@ public class Gyro {
     public double getCurrentAngle() {
         // Change the AxesOrder to one of the values listed here to account for the orientation in which the Gyro is mounted on the robot:
         // See: https://first-tech-challenge.github.io/SkyStone/org/firstinspires/ftc/robotcore/external/navigation/AxesOrder.html
-        angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES); 
 
         globalAngle = angles.firstAngle;
         globalAngle *= -1;
