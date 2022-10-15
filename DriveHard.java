@@ -29,8 +29,7 @@ public class DriveHard extends OpMode{
 
     public void loop() {
         drive();
-        duckSpinner();
-        slides();
+        //slides();
 
         telemetry();
     }
@@ -100,12 +99,6 @@ public class DriveHard extends OpMode{
         robot.back_right.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
-    // Handle Duck Spinner controls
-    private void duckSpinner() {
-        robot.duck_motor.setPower(gamepad2.right_trigger);
-        robot.duck_motor.setPower(-gamepad2.left_trigger);
-    }
-
     // Move the slides up and down and spin the intake motor
     private void slides() {
         robot.slides_motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -132,7 +125,7 @@ public class DriveHard extends OpMode{
         telemetry.addData("Running", "Loop");
         telemetry.addData("Status", "Run Time: " + runtime.toString());
         
-        telemetry.addData("Slide Motor", "Position: " + robot.slides_motor.getCurrentPosition());
+        //telemetry.addData("Slide Motor", "Position: " + robot.slides_motor.getCurrentPosition());
         telemetry.addData("Test Encoder", "Ticks: " + robot.x_encoder.getCurrentPosition());
     }
 }
