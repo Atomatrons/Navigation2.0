@@ -19,6 +19,7 @@ public class Gyro {
     double globalAngle = 0;
     double secondAngle = 0;
     double thirdAngle = 0;
+    static final int TIPPING_POINT = 25;
     private Telemetry telemetry = null;
     private int count = 0;
     public boolean quietMode = false;
@@ -71,5 +72,18 @@ public class Gyro {
         this.telemetry.addData("GYRO: Third Angle ", angles.thirdAngle);
         this.telemetry.addData("GYRO: Global Angle ", globalAngle);
         this.telemetry.update();
+    }
+    public boolean isRobotTipping() {
+        if (angles.thirdAngle > TIPPING_POINT || angles.thirdAngle < TIPPING_POINT * -1) {
+            telemetry.addData("Mayday ", "Tipping");
+            telemetry.addData("Third Angle ", angles.thirdAngle);
+            telemetry.update();
+            return true;
+        }else{
+            telemetry.addData("Status ", "Gud");
+            telemetry.addData("Third Angle ", angles.thirdAngle);
+            telemetry.update();
+            return false;
+        }
     }
 }
