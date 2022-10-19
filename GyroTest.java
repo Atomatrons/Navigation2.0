@@ -42,7 +42,9 @@ public class GyroTest extends LinearOpMode {
 
 		// Loop until we are asked to stop, displaying the gyro info in telemetry
 		while (opModeIsActive()) {
-				gyro.getCurrentAngle();
+			gyro.getCurrentAngle();
+			gyro.isRobotTipping();
+			telemetry.update();
 		}
 	}
 }
