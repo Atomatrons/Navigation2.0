@@ -66,12 +66,14 @@ public class Gyro {
 
     public boolean isRobotTipping() {
         if (angles.thirdAngle > TIPPING_POINT || angles.thirdAngle < TIPPING_POINT * -1) {
-            telemetry.addData("Mayday ", "Tipping");
-            telemetry.addData("Third Angle ", angles.thirdAngle);
+            this.telemetry.addData("Mayday ", "Tipping");
+            this.telemetry.addData("Third Angle ", angles.thirdAngle);
+            this.telemetry.update();
             return true;
         }else{
-            telemetry.addData("Status ", "Gud");
-            telemetry.addData("Third Angle ", angles.thirdAngle);
+            this.telemetry.addData("Status ", "Gud");
+            this.telemetry.addData("Third Angle ", angles.thirdAngle);
+            this.telemetry.update();
             return false;
         }
     }
@@ -83,6 +85,7 @@ public class Gyro {
         this.telemetry.addData("GYRO: First Angle ", angles.firstAngle);
         this.telemetry.addData("GYRO: Second Angle ", angles.secondAngle);
         this.telemetry.addData("GYRO: Third Angle ", angles.thirdAngle);
+        this.telemetry.addData("GYRO: Global Angle ", globalAngle);
         this.telemetry.addData("GYRO: Global Angle ", globalAngle);
     }
 }

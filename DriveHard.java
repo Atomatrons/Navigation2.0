@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import org.firstinspires.ftc.teamcode.navigation.Gyro;
 
 /**
  * This op-mode runs the robot during the Driver Controlled Period.
@@ -27,17 +28,18 @@ public class DriveHard extends OpMode{
         // Initialize the robot interface
         robot.init(telemetry, hardwareMap);
         gyro.init(robot);
+        gyro.quietMode = false;
     }
 
     public void loop() {
         drive();
         //slides();
         boolean isTipping = gyro.isRobotTipping();
-        if (isTipping) {
+        if (gyro.isRobotTipping()) {
             stopTipping();
         }
 
-        telemetry();
+        //telemetry();
         telemetry.update();
     }
 
