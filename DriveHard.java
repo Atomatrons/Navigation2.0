@@ -21,17 +21,24 @@ public class DriveHard extends OpMode{
     private double TICKS_PER_360 = MOTOR_TICKS_PER_360 * GEAR_RATIO;
 
     private ShivaRobot robot = new ShivaRobot();
+    private Gyro gyro = new Gyro();
     
     public void init() {
         // Initialize the robot interface
         robot.init(telemetry, hardwareMap);
+        gyro.init(robot);
     }
 
     public void loop() {
         drive();
         //slides();
+        boolean isTipping = gyro.isRobotTipping();
+        if (isTipping) {
+            stopTipping();
+        }
 
         telemetry();
+        telemetry.update();
     }
 
     // Move the robot
@@ -127,5 +134,9 @@ public class DriveHard extends OpMode{
         
         //telemetry.addData("Slide Motor", "Position: " + robot.slides_motor.getCurrentPosition());
         telemetry.addData("Test Encoder", "Ticks: " + robot.x_encoder.getCurrentPosition());
+    }
+
+    private void stopTipping () {
+        telemetry.addData("Maverick ", "Deploying Counter-Measures");
     }
 }
