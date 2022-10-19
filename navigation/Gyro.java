@@ -16,10 +16,11 @@ import org.firstinspires.ftc.teamcode.ShivaRobot;
  * This class provides a high-level interface to the gyro.
  */
 public class Gyro {
+    static final int TIPPING_POINT = 25;
+
     double globalAngle = 0;
     double secondAngle = 0;
     double thirdAngle = 0;
-    static final int TIPPING_POINT = 25;
     private Telemetry telemetry = null;
     private int count = 0;
     public boolean quietMode = false;
@@ -63,6 +64,18 @@ public class Gyro {
       return compassPoint > getCurrentAngle();
     }
 
+    public boolean isRobotTipping() {
+        if (angles.thirdAngle > TIPPING_POINT || angles.thirdAngle < TIPPING_POINT * -1) {
+            telemetry.addData("Mayday ", "Tipping");
+            telemetry.addData("Third Angle ", angles.thirdAngle);
+            return true;
+        }else{
+            telemetry.addData("Status ", "Gud");
+            telemetry.addData("Third Angle ", angles.thirdAngle);
+            return false;
+        }
+    }
+    
     private void displayInfo() {
         if (this.telemetry == null || this.quietMode == true)
             return;
@@ -71,19 +84,5 @@ public class Gyro {
         this.telemetry.addData("GYRO: Second Angle ", angles.secondAngle);
         this.telemetry.addData("GYRO: Third Angle ", angles.thirdAngle);
         this.telemetry.addData("GYRO: Global Angle ", globalAngle);
-        this.telemetry.update();
-    }
-    public boolean isRobotTipping() {
-        if (angles.thirdAngle > TIPPING_POINT || angles.thirdAngle < TIPPING_POINT * -1) {
-            telemetry.addData("Mayday ", "Tipping");
-            telemetry.addData("Third Angle ", angles.thirdAngle);
-            telemetry.update();
-            return true;
-        }else{
-            telemetry.addData("Status ", "Gud");
-            telemetry.addData("Third Angle ", angles.thirdAngle);
-            telemetry.update();
-            return false;
-        }
     }
 }
