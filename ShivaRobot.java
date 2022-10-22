@@ -39,7 +39,7 @@ public class ShivaRobot {
     public NormalizedColorSensor allianceColorSensor = null;
 
     // Constants
-    public static final double MOTOR_TICKS_PER_360 = 1120;
+    public static final double MOTOR_TICKS_PER_360 = 537.7;
     public static final double DEAD_WHEEL_TICKS = 4190;
 
     // For doing execution time measurements
