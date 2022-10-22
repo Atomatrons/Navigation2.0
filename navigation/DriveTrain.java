@@ -1,12 +1,10 @@
 package org.firstinspires.ftc.teamcode.navigation;
 
+import org.firstinspires.ftc.teamcode.ShivaRobot;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
+
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-
-
-import org.firstinspires.ftc.teamcode.ShivaRobot;
 
 /**
  * Provides low-level autonomous movement functionality for the robot
@@ -20,10 +18,6 @@ public class DriveTrain {
     private DcMotor front_right = null;
     private DcMotor back_left   = null;
     private DcMotor back_right  = null;
-
-    // Cache the deadwheel motors in this class
-    private DcMotor x_encoder = null;
-    private DcMotor y_encoder = null;
     
     private static final float AMPLIFIER = 0.02f;
     
@@ -37,85 +31,39 @@ public class DriveTrain {
         front_right = robot.front_right;
         back_left   = robot.back_left;
         back_right  = robot.back_right;
-        x_encoder = robot.x_encoder;
-        y_encoder = robot.y_encoder;
 
+        stop();
         setZeroPowerBehavior();
-        
-        // Initialize the motors to run without encoders
-        //reset();
     }
     
     // Move the robot forward the specified rotations, at the specified power
     // Power must be a value from -1.0 to 1.0
     // The gyro is used to help the robot drive straight
-    public void forward(double rotationsToSpin, double power)
-    {   
+    public void move(double rotationsToSpin, double power)
+    {
         // Get the robot's current heading, and compute the number of ticks needed to move
         float startAngle = (float)gyro.getCurrentAngle();
-        
-        // Compute how many ticks we need the dead wheel to spin
-        int rotationsInTicks = (int) Math.round(ShivaRobot.DEAD_WHEEL_TICKS * rotationsToSpin);
-        int initalPosition = y_encoder.getCurrentPosition();
-        int targetPosition = initalPosition + rotationsInTicks;
-  
-        // Set the wheels so we move forwards
-        front_left.setDirection(DcMotorSimple.Direction.FORWARD);
-        back_left.setDirection(DcMotorSimple.Direction.FORWARD);
-        front_right.setDirection(DcMotorSimple.Direction.REVERSE);
-        back_right.setDirection(DcMotorSimple.Direction.REVERSE);
-
-        // Start the robot moving.
-        startMovement(power);    
-
-        // While the robot is moving, use the gyro to help it move in a stright line
-        while(y_encoder.getCurrentPosition() <= targetPosition)
-        {
-            adjust(-getCorrectionAngle(startAngle), (float)power);
-            telemetry.addData("Rotations in Ticks: ", rotationsInTicks);            
-            telemetry.addData("Y Encoder Inital Position: ", initalPosition);    
-            telemetry.addData("Y Encoder Target Position: ", targetPosition);    
-            telemetry.addData("Y Encoder Position: ", y_encoder.getCurrentPosition());
-            telemetry.update();
-        }
-        
-        // Stop robot
-        stop();
-    }
-    
-    // Move the robot backwards the specified rotations, at the specified power
-    // Power must be a value from -1.0 to 1.0s
-    // The gyro is used to help the robot drive straight
-    public void backward(double rotationsToSpin, double power)
-    {   
-        // Get the robot's current heading, and compute the number of ticks needed to move
-        float startAngle = (float)gyro.getCurrentAngle();
-        
-        // Set the wheels so we move forwards
-        front_left.setDirection(DcMotorSimple.Direction.REVERSE);
-        back_left.setDirection(DcMotorSimple.Direction.REVERSE);
-        front_right.setDirection(DcMotorSimple.Direction.FORWARD);
-        back_right.setDirection(DcMotorSimple.Direction.FORWARD);
 
         // Compute how many ticks we need the dead wheel to spin
-        int rotationsInTicks = (int) Math.round(ShivaRobot.DEAD_WHEEL_TICKS * rotationsToSpin);
-        int initalPosition = y_encoder.getCurrentPosition();
-        int targetPosition = initalPosition + rotationsInTicks;
+        int rotationsInTicks = (int) Math.round(ShivaRobot.MOTOR_TICKS_PER_360 * rotationsToSpin);
 
-        // Start the robot moving.
-        startMovement(power);    
+            front_left.setDirection(DcMotorSimple.Direction.REVERSE);
+            back_left.setDirection(DcMotorSimple.Direction.REVERSE);
+            front_right.setDirection(DcMotorSimple.Direction.FORWARD);
+            back_right.setDirection(DcMotorSimple.Direction.FORWARD);
 
-        // While the robot is moving, use the gyro to help it move in a stright line
-        while(y_encoder.getCurrentPosition() <= targetPosition)
+        setTargetPositions(rotationsInTicks);
+        setModes(DcMotor.RunMode.RUN_TO_POSITION);
+        startMovement(power);
+
+        // While the robot is moving, use the gyro to help it move in a straight line
+        while(front_right.isBusy())
         {
             adjust(getCorrectionAngle(startAngle), (float)power);
-            telemetry.addData("Rotations in Ticks: ", rotationsInTicks);            
-            telemetry.addData("Y Encoder Inital Position: ", initalPosition);    
-            telemetry.addData("Y Encoder Target Position: ", targetPosition);    
-            telemetry.addData("Y Encoder Position: ", y_encoder.getCurrentPosition());
+            telemetry.addData("Rotations in Ticks: ", rotationsInTicks);
+            telemetry.addData("Encoder Position: ", front_right.getCurrentPosition());
             telemetry.update();
         }
-        
         // Stop robot
         stop();
     }
@@ -123,57 +71,24 @@ public class DriveTrain {
     // Move the robot sideways to the right the specified rotations, at the specified power
     // Power must be a value from -1.0 to 1.0
     // The gyro is NOT used to help the robot drive straight
-    public void strafeRight(double rotationsToSpin, double power) throws InterruptedException
+    public void strafe(double rotationsToSpin, double power)
     {
-        // Set the wheels so we move to the right
-        front_left.setDirection(DcMotorSimple.Direction.FORWARD);
-        back_left.setDirection(DcMotorSimple.Direction.REVERSE);
-        front_right.setDirection(DcMotorSimple.Direction.FORWARD);
-        back_right.setDirection(DcMotorSimple.Direction.REVERSE);
+        int rotationsInTicks = (int) Math.round(ShivaRobot.MOTOR_TICKS_PER_360 * rotationsToSpin);
 
-        int rotationsInTicks = (int) Math.round(ShivaRobot.DEAD_WHEEL_TICKS * rotationsToSpin);
-        int initalPosition = x_encoder.getCurrentPosition();
-        int targetPosition = initalPosition + rotationsInTicks;
-        
+            front_left.setDirection(DcMotorSimple.Direction.REVERSE);
+            back_left.setDirection(DcMotorSimple.Direction.FORWARD);
+            front_right.setDirection(DcMotorSimple.Direction.REVERSE);
+            back_right.setDirection(DcMotorSimple.Direction.FORWARD);
+
+        setTargetPositions(rotationsInTicks);
+        setModes(DcMotor.RunMode.RUN_TO_POSITION);
         startMovement(power);
         
         // Wait for the robot to reach its destination
-        while(x_encoder.getCurrentPosition() <= targetPosition)
+        while(front_right.isBusy())
         {
-            telemetry.addData("Rotations in Ticks: ", rotationsInTicks);            
-            telemetry.addData("X Encoder Inital Position: ", initalPosition);    
-            telemetry.addData("X Encoder Target Position: ", targetPosition);    
-            telemetry.addData("X Encoder Position: ", x_encoder.getCurrentPosition());
-            telemetry.update();
-        }
-
-        stop();
-    }
-    
-    // Move the robot sideways to the left the specified rotations, at the specified power
-    // Power must be a value from -1.0 to 1.0
-    // The gyro is NOT used to help the robot drive straight
-    public void strafeLeft(double rotationsToSpin, double power) throws InterruptedException
-    {                
-        // Set the wheels so we move to the left
-        front_left.setDirection(DcMotorSimple.Direction.REVERSE);
-        back_left.setDirection(DcMotorSimple.Direction.FORWARD);
-        front_right.setDirection(DcMotorSimple.Direction.REVERSE);
-        back_right.setDirection(DcMotorSimple.Direction.FORWARD);
-
-        int rotationsInTicks = (int) Math.round(ShivaRobot.DEAD_WHEEL_TICKS * rotationsToSpin);
-        int initalPosition = x_encoder.getCurrentPosition();
-        int targetPosition = initalPosition + rotationsInTicks;
-        
-        startMovement(power);
-        
-        // Wait for the robot to reach its destination
-        while(x_encoder.getCurrentPosition() <= targetPosition)
-        {
-            telemetry.addData("Rotations in Ticks: ", rotationsInTicks);            
-            telemetry.addData("X Encoder Inital Position: ", initalPosition);    
-            telemetry.addData("X Encoder Target Position: ", targetPosition);    
-            telemetry.addData("X Encoder Position: ", x_encoder.getCurrentPosition());
+            telemetry.addData("Rotations in Ticks: ", rotationsInTicks);
+            telemetry.addData("Encoder Position: ", front_right.getCurrentPosition());
             telemetry.update();
         }
 
@@ -184,13 +99,14 @@ public class DriveTrain {
     // compassPoint must be a value from -180.0 to 180.0
     // power must be a value from -1.0 to 1.0
     public void turn(float compassPoint, double power)
-    {   
+    {
+        setModes(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         if (gyro.isClockwise(compassPoint))
         {
-            front_left.setDirection(DcMotorSimple.Direction.FORWARD);
-            back_left.setDirection(DcMotorSimple.Direction.FORWARD);
-            front_right.setDirection(DcMotorSimple.Direction.FORWARD);
-            back_right.setDirection(DcMotorSimple.Direction.FORWARD);
+            front_left.setDirection(DcMotorSimple.Direction.REVERSE);
+            back_left.setDirection(DcMotorSimple.Direction.REVERSE);
+            front_right.setDirection(DcMotorSimple.Direction.REVERSE);
+            back_right.setDirection(DcMotorSimple.Direction.REVERSE);
                 
             startMovement(power);
             while(gyro.getCurrentAngle() < compassPoint)
@@ -202,10 +118,10 @@ public class DriveTrain {
         }
         else if (!gyro.isClockwise(compassPoint))
         {
-            front_left.setDirection(DcMotorSimple.Direction.REVERSE);
-            back_left.setDirection(DcMotorSimple.Direction.REVERSE);
-            front_right.setDirection(DcMotorSimple.Direction.REVERSE);
-            back_right.setDirection(DcMotorSimple.Direction.REVERSE);
+            front_left.setDirection(DcMotorSimple.Direction.FORWARD);
+            back_left.setDirection(DcMotorSimple.Direction.FORWARD);
+            front_right.setDirection(DcMotorSimple.Direction.FORWARD);
+            back_right.setDirection(DcMotorSimple.Direction.FORWARD);
                 
             startMovement(power);
             while(gyro.getCurrentAngle() > compassPoint)
@@ -217,11 +133,7 @@ public class DriveTrain {
         }
         
         stop();
-
-        front_left.setDirection(DcMotorSimple.Direction.REVERSE);
-        back_left.setDirection(DcMotorSimple.Direction.REVERSE);
-        front_right.setDirection(DcMotorSimple.Direction.FORWARD);
-        back_right.setDirection(DcMotorSimple.Direction.FORWARD);
+        setModes(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     public void stop()
@@ -230,6 +142,9 @@ public class DriveTrain {
         back_left.setPower(0);
         front_right.setPower(0);
         back_right.setPower(0);
+
+        setModes(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
         telemetry.addData("Status: ", "Stopped");
         telemetry.update();
     }
@@ -252,17 +167,17 @@ public class DriveTrain {
         
         if(angle > 0)
         {
-            front_left.setPower(basePower - powerChange);
-            back_left.setPower(basePower - powerChange);
-            front_right.setPower(basePower + powerChange);
-            back_right.setPower(basePower + powerChange);
-        }
-        else if(angle < 0)
-        {
             front_left.setPower(basePower + powerChange);
             back_left.setPower(basePower + powerChange);
             front_right.setPower(basePower - powerChange);
             back_right.setPower(basePower - powerChange);
+        }
+        else if(angle < 0)
+        {
+            front_left.setPower(basePower - powerChange);
+            back_left.setPower(basePower - powerChange);
+            front_right.setPower(basePower + powerChange);
+            back_right.setPower(basePower + powerChange);
         }
     }
     
@@ -278,5 +193,19 @@ public class DriveTrain {
         back_left.setZeroPowerBehavior(zpb);
         front_right.setZeroPowerBehavior(zpb);
         back_right.setZeroPowerBehavior(zpb);
+    }
+
+    private void setModes(DcMotor.RunMode runMode){
+        front_left.setMode(runMode);
+        back_left.setMode(runMode);
+        front_right.setMode(runMode);
+        back_right.setMode(runMode);
+    }
+
+    private void setTargetPositions(int targetPosition){
+        front_left.setTargetPosition(targetPosition);
+        back_left.setTargetPosition(targetPosition);
+        front_right.setTargetPosition(targetPosition);
+        back_right.setTargetPosition(targetPosition);
     }
 }
