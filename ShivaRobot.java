@@ -27,7 +27,6 @@ public class ShivaRobot {
 
     // Slides motors
     public DcMotor slides_motor = null;
-    public DcMotor intake_spinner = null;
 
     // Gyro
     public BNO055IMU imu = null;
@@ -63,6 +62,8 @@ public class ShivaRobot {
         back_left.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         front_right.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         back_right.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        slides_motor = front_right;
 
          // Dead wheel encoders; set current position to 0,0
          x_encoder = back_left;

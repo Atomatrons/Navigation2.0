@@ -33,7 +33,7 @@ public class DriveHard extends OpMode{
 
     public void loop() {
         drive();
-        //slides();
+        slides();
         boolean isTipping = gyro.isRobotTipping();
         if (gyro.isRobotTipping()) {
             stopTipping();
@@ -125,8 +125,6 @@ public class DriveHard extends OpMode{
         {
             robot.slides_motor.setPower(0);
         }
-        
-        robot.intake_spinner.setPower(gamepad2.left_stick_y);        
     }
 
     // Display info on the driver station
