@@ -16,13 +16,12 @@ import org.firstinspires.ftc.teamcode.navigation.Gyro;
 @TeleOp(name = "DriveHard", group = "Production")
 public class DriveHard extends OpMode{
     private ElapsedTime runtime = new ElapsedTime();
-    
-    private int MOTOR_TICKS_PER_360 = 1120;
-    private double GEAR_RATIO = 40/15.0;
-    private double TICKS_PER_360 = MOTOR_TICKS_PER_360 * GEAR_RATIO;
 
     private ShivaRobot robot = new ShivaRobot();
     private Gyro gyro = new Gyro();
+
+    private final int MAX_SLIDES_POSITION = 3150;
+    private final int MIN_SLIDES_POSITION = 0;
     
     public void init() {
         // Initialize the robot interface
@@ -34,6 +33,7 @@ public class DriveHard extends OpMode{
     public void loop() {
         drive();
         slides();
+        grip();
         boolean isTipping = gyro.isRobotTipping();
         if (gyro.isRobotTipping()) {
             stopTipping();
@@ -66,6 +66,7 @@ public class DriveHard extends OpMode{
         if(gamepad1.dpad_right)
         {
             strafe = -0.4;
+
         }
 
         double[] speeds = {
@@ -88,14 +89,6 @@ public class DriveHard extends OpMode{
             for (int i = 0; i < speeds.length; i++) speeds[i] /= max;
         }
         
-        // Reverse meaning of joystick if back button pressed to make it easier to
-        // navigate robot when dealing with the arm
-        if (gamepad1.right_bumper) {
-            for (int index = 0; index < 4; index++) {
-                speeds[index] *= -1;
-            }
-        }
-        
         // apply the calculated values to the motors.
         robot.front_left.setPower(speeds[0]);
         robot.front_right.setPower(speeds[1]);
@@ -108,23 +101,28 @@ public class DriveHard extends OpMode{
         robot.back_right.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
-    // Move the slides up and down and spin the intake motor
+    // Move the slides up and down
     private void slides() {
         robot.slides_motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        if(gamepad2.right_stick_y > 0 && robot.slides_motor.getCurrentPosition() <= 0) 
+        if(gamepad2.left_stick_y > 0 && robot.slides_motor.getCurrentPosition() <= MIN_SLIDES_POSITION) 
         {
-            robot.slides_motor.setPower(gamepad2.right_stick_y);
+            robot.slides_motor.setPower(gamepad2.left_stick_y);
         }
     
-        else if(gamepad2.right_stick_y < 0 && robot.slides_motor.getCurrentPosition() >= -3150) 
+        else if(gamepad2.left_stick_y < 0 && robot.slides_motor.getCurrentPosition() >= -MAX_SLIDES_POSITION) 
         {
-            robot.slides_motor.setPower(gamepad2.right_stick_y);
+            robot.slides_motor.setPower(gamepad2.left_stick_y);
         }
         else 
         {
             robot.slides_motor.setPower(0);
         }
+    }
+
+    //Move servo to grip cones
+    private void grip(){
+        robot.grip_servo.setPosition(gamepad2.right_trigger);
     }
 
     // Display info on the driver station
