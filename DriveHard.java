@@ -27,7 +27,9 @@ public class DriveHard extends OpMode{
         // Initialize the robot interface
         robot.init(telemetry, hardwareMap);
         gyro.init(robot);
-        gyro.quietMode = false;
+        gyro.quietMode = true;
+        robot.slides_motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.grip_servo.scaleRange(0.3, 1);
     }
 
     public void loop() {
@@ -39,7 +41,7 @@ public class DriveHard extends OpMode{
             stopTipping();
         }
 
-        //telemetry();
+        telemetry();
         telemetry.update();
     }
 
@@ -105,12 +107,12 @@ public class DriveHard extends OpMode{
     private void slides() {
         robot.slides_motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        if(gamepad2.left_stick_y > 0 && robot.slides_motor.getCurrentPosition() <= MIN_SLIDES_POSITION) 
+        if(gamepad2.left_stick_y > 0  && robot.slides_motor.getCurrentPosition() <= MIN_SLIDES_POSITION) 
         {
             robot.slides_motor.setPower(gamepad2.left_stick_y);
         }
     
-        else if(gamepad2.left_stick_y < 0 && robot.slides_motor.getCurrentPosition() >= -MAX_SLIDES_POSITION) 
+        else if(gamepad2.left_stick_y < 0 /*\ &&  robot.slides_motor.getCurrentPosition()  >= -MAX_SLIDES_POSITION*/) 
         {
             robot.slides_motor.setPower(gamepad2.left_stick_y);
         }
@@ -130,7 +132,8 @@ public class DriveHard extends OpMode{
         telemetry.addData("Running", "Loop");
         telemetry.addData("Status", "Run Time: " + runtime.toString());
         
-        //telemetry.addData("Slide Motor", "Position: " + robot.slides_motor.getCurrentPosition());
+        telemetry.addData("Slide Motor", "Position: " + robot.slides_motor.getCurrentPosition());
+        telemetry.addData("Grip Servo", "Position: " + robot.grip_servo.getPosition());
         telemetry.addData("Test Encoder", "Ticks: " + robot.x_encoder.getCurrentPosition());
     }
 
