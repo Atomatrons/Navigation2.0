@@ -8,6 +8,8 @@ import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 /**
  * This class is used to define all the specific hardware for our robot.
@@ -37,6 +39,10 @@ public class ShivaRobot {
     // Alliance Sensor
     public NormalizedColorSensor allianceColorSensor = null;
 
+    // Distance Sensors
+    public DistanceSensor distance_left = null;
+    public DistanceSensor distance_right = null;
+
     // Constants
     public static final double MOTOR_TICKS_PER_360 = 537.7;
     public static final double DEAD_WHEEL_TICKS = 4190;
@@ -64,6 +70,9 @@ public class ShivaRobot {
 
         grip_servo = hardwareMap.get(Servo.class, "grip_servo");
 
+        distance_left = hardwareMap.get(DistanceSensor.class, "distance_left");
+        distance_right = hardwareMap.get(DistanceSensor.class, "distance_right");
+
         // Set Motors to not use encoders
         front_left.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         back_left.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -85,7 +94,7 @@ public class ShivaRobot {
         //allianceColorSensor = hardwareMap.get(NormalizedColorSensor.class, "alliance_sensor");
 
         // Reverse the direction of the right side motors,
-        // so power with the same sing (+ or -) causes the robot to move in the same direction,
+        // so power with the same sign (+ or -) causes the robot to move in the same direction,
         // no matter which wheels the power is applied to.
         front_left.setDirection(DcMotor.Direction.REVERSE);
         back_left.setDirection(DcMotor.Direction.REVERSE);
