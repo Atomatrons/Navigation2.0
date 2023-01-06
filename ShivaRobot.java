@@ -66,12 +66,13 @@ public class ShivaRobot {
         back_right = hardwareMap.get(DcMotor.class, "back_right");
         front_right = hardwareMap.get(DcMotor.class, "front_right");
 
-        slides_motor = hardwareMap.get(DcMotor.class, "slides_motor");
+        slides_motor = hardwareMap.get(DcMotor.class, "slides");
 
         grip_servo = hardwareMap.get(Servo.class, "grip_servo");
 
-        distance_left = hardwareMap.get(DistanceSensor.class, "distance_left");
-        distance_right = hardwareMap.get(DistanceSensor.class, "distance_right");
+        // Distance Sensors
+        distance_left = hardwareMap.get(DistanceSensor.class, "distance left");
+        distance_right = hardwareMap.get(DistanceSensor.class, "distance right");
 
         // Set Motors to not use encoders
         front_left.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);

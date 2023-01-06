@@ -68,12 +68,10 @@ public class Gyro {
         if (angles.thirdAngle > TIPPING_POINT || angles.thirdAngle < TIPPING_POINT * -1) {
             this.telemetry.addData("Mayday ", "Tipping");
             this.telemetry.addData("Third Angle ", angles.thirdAngle);
-            this.telemetry.update();
             return true;
         }else{
-            this.telemetry.addData("Status ", "Gud");
+            this.telemetry.addData("Status ", "Good");
             this.telemetry.addData("Third Angle ", angles.thirdAngle);
-            this.telemetry.update();
             return false;
         }
     }

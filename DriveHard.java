@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import org.firstinspires.ftc.teamcode.navigation.Gyro;
+import org.firstinspires.ftc.teamcode.utility.Distance;
 
 /**
  * This op-mode runs the robot during the Driver Controlled Period.
@@ -19,6 +20,7 @@ public class DriveHard extends OpMode{
 
     private ShivaRobot robot = new ShivaRobot();
     private Gyro gyro = new Gyro();
+    private Distance distance = new Distance();
 
     private final int MAX_SLIDES_POSITION = 3150;
     private final int MIN_SLIDES_POSITION = 0;
@@ -28,6 +30,8 @@ public class DriveHard extends OpMode{
         robot.init(telemetry, hardwareMap);
         gyro.init(robot);
         gyro.quietMode = true;
+        distance.init(robot);
+
         robot.slides_motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         robot.grip_servo.scaleRange(0.3, 1);
     }
@@ -68,14 +72,27 @@ public class DriveHard extends OpMode{
         if(gamepad1.dpad_right)
         {
             strafe = -0.4;
+        }
 
+        boolean isTargetLocked = distance.targetLocked();
+        double targetRange = distance.distance(true);
+        telemetry.addLine();
+        telemetry.addData("Target Locked", isTargetLocked);
+        if (isTargetLocked) {
+            telemetry.addData("Target Locked", targetRange);
+        }
+        telemetry.addLine();
+
+        if (isTargetLocked && gamepad1.left_bumper) {
+            drive = autoDrive(12.5, targetRange);
+            telemetry.addData("Auto Drive", drive);
         }
 
         double[] speeds = {
-            -(drive + strafe + twist), //Front left power
-            -(drive - strafe - twist), //Front right power
-            -(drive - strafe + twist), //Back left power
-            -(drive + strafe - twist) //Back right power
+            -(drive + strafe + twist),      //Front left power
+            -(drive - strafe - twist),      //Front right power
+            -(drive - strafe + twist),      //Back left power
+            -(drive + strafe - twist)       //Back right power
         };
 
 
@@ -140,4 +157,14 @@ public class DriveHard extends OpMode{
     private void stopTipping () {
         telemetry.addData("Maverick ", "Deploying Counter-Measures");
     }
+
+    // Return value between -1.0 and 1.0 to indicate power to drive with to get to the target distance
+	private double autoDrive(double targetDistance, double currentDistance) {
+        double distanceToGo = currentDistance - targetDistance;             // range -DISTANCE_MAX to DISTANCE_MAX
+        double amplifier = 0.1;
+        double minPower = 0.0;
+        double percentDistanceToGo = distanceToGo / distance.DISTANCE_MAX;  // range -1 .. 1
+
+        return (percentDistanceToGo * amplifier) + minPower;
+	}
 }
