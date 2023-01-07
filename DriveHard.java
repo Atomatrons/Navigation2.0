@@ -20,8 +20,10 @@ public class DriveHard extends OpMode{
     private ShivaRobot robot = new ShivaRobot();
     private Gyro gyro = new Gyro();
 
-    private final int MAX_SLIDES_POSITION = 3150;
+    private final int MAX_SLIDES_POSITION = 5316;
     private final int MIN_SLIDES_POSITION = 0;
+
+    private boolean slidesAreMoving = false;
     
     public void init() {
         // Initialize the robot interface
@@ -70,13 +72,24 @@ public class DriveHard extends OpMode{
             strafe = -0.4;
 
         }
+        double [] speeds = {0, 0, 0, 0};
+        if(slidesAreMoving){
+            speeds = new double []{
+                -(drive + strafe + twist) / 2, //Front left power
+                -(drive - strafe - twist) / 2, //Front right power
+                -(drive - strafe + twist) / 2, //Back left power
+                -(drive + strafe - twist) / 2 //Back right power
+            };
+        }
+        else{
+            speeds = new double []{
+                -(drive + strafe + twist), //Front left power
+                -(drive - strafe - twist), //Front right power
+                -(drive - strafe + twist), //Back left power
+                -(drive + strafe - twist) //Back right power
+            };
+        }
 
-        double[] speeds = {
-            -(drive + strafe + twist), //Front left power
-            -(drive - strafe - twist), //Front right power
-            -(drive - strafe + twist), //Back left power
-            -(drive + strafe - twist) //Back right power
-        };
 
 
         // Normalizes values
@@ -110,16 +123,31 @@ public class DriveHard extends OpMode{
         if(gamepad2.left_stick_y > 0  && robot.slides_motor.getCurrentPosition() <= MIN_SLIDES_POSITION) 
         {
             robot.slides_motor.setPower(gamepad2.left_stick_y);
+            slidesAreMoving = true; 
         }
     
-        else if(gamepad2.left_stick_y < 0 /*\ &&  robot.slides_motor.getCurrentPosition()  >= -MAX_SLIDES_POSITION*/) 
+        else if(gamepad2.left_stick_y < 0  &&  robot.slides_motor.getCurrentPosition()  >= -MAX_SLIDES_POSITION) 
         {
             robot.slides_motor.setPower(gamepad2.left_stick_y);
+            slidesAreMoving = true;
         }
+        else if(gamepad2.dpad_up)
+        {
+            robot.slides_motor.setPower(0.5);
+            slidesAreMoving = true;
+        }
+        else if(gamepad2.dpad_down)
+        {
+            robot.slides_motor.setPower(0.5);
+            slidesAreMoving = true; 
+        }    
         else 
         {
             robot.slides_motor.setPower(0);
+            slidesAreMoving = false;
         }
+
+
     }
 
     //Move servo to grip cones
