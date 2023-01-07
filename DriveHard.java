@@ -31,7 +31,7 @@ public class DriveHard extends OpMode{
         gyro.init(robot);
         gyro.quietMode = true;
         robot.slides_motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        robot.grip_servo.scaleRange(0.3, 1);
+        robot.grip_servo.scaleRange(0.45, 1);
     }
 
     public void loop() {
@@ -51,8 +51,8 @@ public class DriveHard extends OpMode{
     private void drive() {
         // Mecanum drive is controlled with three axes: drive (front-and-back),
         // strafe (left-and-right), and twist (rotating the whole chassis).
-        double drive  = gamepad1.left_stick_y;
-        double twist = -gamepad1.right_stick_x / 2;
+        double drive  = (gamepad1.left_stick_y) * 0.7;
+        double twist = (-gamepad1.right_stick_x) * 0.65;
         double strafe = -gamepad1.left_stick_x / 2;
         
         if(gamepad1.dpad_up)
@@ -65,11 +65,11 @@ public class DriveHard extends OpMode{
         }
         if(gamepad1.dpad_left)
         {
-            strafe = 0.4;
+            strafe = 0.5;
         }
         if(gamepad1.dpad_right)
         {
-            strafe = -0.4;
+            strafe = -0.5;
 
         }
         double [] speeds = {0, 0, 0, 0};
@@ -146,13 +146,16 @@ public class DriveHard extends OpMode{
             robot.slides_motor.setPower(0);
             slidesAreMoving = false;
         }
-
-
     }
 
     //Move servo to grip cones
     private void grip(){
-        robot.grip_servo.setPosition(gamepad2.right_trigger);
+        if(gamepad2.a){
+            robot.grip_servo.setPosition(1);
+        }
+        if(gamepad2.b){
+            robot.grip_servo.setPosition(0);
+        }
     }
 
     // Display info on the driver station
