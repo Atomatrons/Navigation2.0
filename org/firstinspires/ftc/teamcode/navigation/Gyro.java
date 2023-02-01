@@ -21,6 +21,7 @@ public class Gyro {
     double globalAngle = 0;
     double secondAngle = 0;
     double thirdAngle = 0;
+    double offSet = 0;
     private Telemetry telemetry = null;
     private int count = 0;
     public boolean quietMode = false;
@@ -56,10 +57,21 @@ public class Gyro {
         globalAngle = angles.firstAngle;
         globalAngle *= -1;
 
+        globalAngle = globalAngle - offSet;
+
+        if (globalAngle < -180) {
+            globalAngle += 360;
+        } else if (globalAngle > 180) {
+            globalAngle -= 360;
+        }
+
         this.displayInfo();
         return globalAngle;
     }
-    
+
+    public void resetAngles() {
+        offSet = getCurrentAngle();
+    }    
     public boolean isClockwise(float compassPoint) {
       return compassPoint > getCurrentAngle();
     }

@@ -46,6 +46,9 @@ public class DriveHardSquaredHarder extends OpMode{
 
         if (gamepad1.y) {
             fieldOriendtedDrive = !fieldOriendtedDrive;
+            if (fieldOriendtedDrive) {
+                gyro.resetAngles();
+            }
         }
 
         telemetry();
