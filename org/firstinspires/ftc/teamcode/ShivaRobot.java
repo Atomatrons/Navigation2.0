@@ -27,10 +27,9 @@ public class ShivaRobot {
 
     // Slides motors
     public DcMotor slides_motor = null;
-    public DcMotor intake_spinner = null;
 
-    // Duck motors
-    public DcMotor duck_motor = null;
+    //Grip servo
+    public Servo grip_servo = null;
 
     // Gyro
     public BNO055IMU imu = null;
@@ -39,7 +38,7 @@ public class ShivaRobot {
     public NormalizedColorSensor allianceColorSensor = null;
 
     // Constants
-    public static final double MOTOR_TICKS_PER_360 = 1120;
+    public static final double MOTOR_TICKS_PER_360 = 537.7;
     public static final double DEAD_WHEEL_TICKS = 4190;
 
     // For doing execution time measurements
@@ -61,20 +60,18 @@ public class ShivaRobot {
         back_right = hardwareMap.get(DcMotor.class, "back_right");
         front_right = hardwareMap.get(DcMotor.class, "front_right");
 
+        slides_motor = hardwareMap.get(DcMotor.class, "slides_motor");
+
+        grip_servo = hardwareMap.get(Servo.class, "grip_servo");
+
         // Set Motors to not use encoders
         front_left.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         back_left.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         front_right.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         back_right.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        // Slides motors
-        slides_motor = hardwareMap.get(DcMotor.class, "slides");
-        intake_spinner = hardwareMap.get(DcMotor.class, "intake_spinner");
 
-        // Duck motors
-        duck_motor = hardwareMap.get(DcMotor.class, "duck");
-
-         // Dead wheel encoders; set current position to 0,0
+        // Dead wheel encoders; set current position to 0,0
          x_encoder = back_left;
          y_encoder = front_left;
 
@@ -85,12 +82,12 @@ public class ShivaRobot {
         // It's recommended to use NormalizedColorSensor over ColorSensor, because
         // NormalizedColorSensor consistently gives values between 0 and 1, while
         // the values you get from ColorSensor are dependent on the specific sensor you're using.
-        allianceColorSensor = hardwareMap.get(NormalizedColorSensor.class, "alliance_sensor");
+        //allianceColorSensor = hardwareMap.get(NormalizedColorSensor.class, "alliance_sensor");
 
         // Reverse the direction of the right side motors,
         // so power with the same sing (+ or -) causes the robot to move in the same direction,
         // no matter which wheels the power is applied to.
-        front_right.setDirection(DcMotor.Direction.REVERSE);
-        back_right.setDirection(DcMotor.Direction.REVERSE);
+        front_left.setDirection(DcMotor.Direction.REVERSE);
+        back_left.setDirection(DcMotor.Direction.REVERSE);
     }
 }

@@ -16,6 +16,8 @@ import org.firstinspires.ftc.teamcode.ShivaRobot;
  * This class provides a high-level interface to the gyro.
  */
 public class Gyro {
+    static final int TIPPING_POINT = 25;
+
     double globalAngle = 0;
     double secondAngle = 0;
     double thirdAngle = 0;
@@ -49,7 +51,7 @@ public class Gyro {
     public double getCurrentAngle() {
         // Change the AxesOrder to one of the values listed here to account for the orientation in which the Gyro is mounted on the robot:
         // See: https://first-tech-challenge.github.io/SkyStone/org/firstinspires/ftc/robotcore/external/navigation/AxesOrder.html
-        angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES); 
 
         globalAngle = angles.firstAngle;
         globalAngle *= -1;
@@ -62,6 +64,20 @@ public class Gyro {
       return compassPoint > getCurrentAngle();
     }
 
+    public boolean isRobotTipping() {
+        if (angles.thirdAngle > TIPPING_POINT || angles.thirdAngle < TIPPING_POINT * -1) {
+            this.telemetry.addData("Mayday ", "Tipping");
+            this.telemetry.addData("Third Angle ", angles.thirdAngle);
+            this.telemetry.update();
+            return true;
+        }else{
+            this.telemetry.addData("Status ", "Gud");
+            this.telemetry.addData("Third Angle ", angles.thirdAngle);
+            this.telemetry.update();
+            return false;
+        }
+    }
+    
     private void displayInfo() {
         if (this.telemetry == null || this.quietMode == true)
             return;
@@ -70,6 +86,6 @@ public class Gyro {
         this.telemetry.addData("GYRO: Second Angle ", angles.secondAngle);
         this.telemetry.addData("GYRO: Third Angle ", angles.thirdAngle);
         this.telemetry.addData("GYRO: Global Angle ", globalAngle);
-        this.telemetry.update();
+        this.telemetry.addData("GYRO: Global Angle ", globalAngle);
     }
 }

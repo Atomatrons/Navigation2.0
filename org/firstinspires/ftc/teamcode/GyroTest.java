@@ -18,7 +18,7 @@ import org.firstinspires.ftc.teamcode.navigation.Gyro;
 /**
  * This op-mode tests the Gyro class
  */
-@Autonomous(name = "Gyro Test", group = "Test")
+@Autonomous(name = "Gyro Test X", group = "Test")
 public class GyroTest extends LinearOpMode {
 
 	ShivaRobot robot = new ShivaRobot();
@@ -32,7 +32,7 @@ public class GyroTest extends LinearOpMode {
 		// Initialize the robot interface
 		robot.init(telemetry, hardwareMap);
 		gyro.init(robot);
-		telemetry.addData("GyroTest", "Robot Initialized");
+		telemetry.addData("GyroTest", "Robot Initialized v1.0");
 		telemetry.update();
 
 		// Wait for the start button to be pressed.
@@ -42,7 +42,13 @@ public class GyroTest extends LinearOpMode {
 
 		// Loop until we are asked to stop, displaying the gyro info in telemetry
 		while (opModeIsActive()) {
-				gyro.getCurrentAngle();
+			gyro.getCurrentAngle();
+			if (gyro.isRobotTipping())	{
+				this.telemetry.addData("Mayday ", "Tipping");
+        }else{
+            this.telemetry.addData("Status ", "Gud");
+		}
+			telemetry.update();
 		}
 	}
 }

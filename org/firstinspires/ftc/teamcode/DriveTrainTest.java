@@ -12,23 +12,19 @@ import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 import com.qualcomm.robotcore.hardware.SwitchableLight;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.teamcode.navigation.Navigation; 
-import org.firstinspires.ftc.teamcode.navigation.Path; 
+
 import org.firstinspires.ftc.teamcode.navigation.DriveTrain;
 import org.firstinspires.ftc.teamcode.navigation.Gyro;
-import org.firstinspires.ftc.teamcode.navigation.Pose;
-
 
 /**
  * This op-mode tests the Alliance classes
  */
-@Autonomous(name = "Navigation", group = "Test")
-public class NavigationTest extends LinearOpMode {
+@Autonomous(name = "DriveTrain Test", group = "Test")
+public class DriveTrainTest extends LinearOpMode {
 
   ShivaRobot robot = new ShivaRobot();
   Gyro gyro = new Gyro();
-  DriveTrain driveTrain = new DriveTrain();
-  Navigation nav = new Navigation();
+  DriveTrain drivetrain = new DriveTrain();
 
   /**
    * Repeatedly test and report the alliance detected by the ShivaAlliance class
@@ -38,17 +34,18 @@ public class NavigationTest extends LinearOpMode {
     // Initialize the robot interface
     robot.init(telemetry, hardwareMap);
     gyro.init(robot);
-    driveTrain.init(robot, gyro);
-    nav.init(driveTrain);
+    drivetrain.init(robot, gyro);
 
     // Wait for the start button to be pressed.
     waitForStart();
 
-    Pose endPose = new Pose(4, 5, 60);
+    // Drive the robot a short distance forward, backward, left, and right, and then turn 180 in each direction.
 
-    nav.goToPose(endPose, Path.DIRECT, 0.8);
+    drivetrain.move (5, 0.5);
+    drivetrain.strafe (3, 0.5);
 
     while (opModeIsActive()) {
+
 
     }
   }

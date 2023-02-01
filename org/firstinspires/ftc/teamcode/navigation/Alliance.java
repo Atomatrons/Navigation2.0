@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.navigation;
 
-public enum Path{
-    XY,
-    YX,
-    DIRECT
+public enum Alliance {
+  RED,
+  BLUE
 }

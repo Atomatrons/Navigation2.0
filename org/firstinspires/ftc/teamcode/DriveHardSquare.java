@@ -7,41 +7,53 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import org.firstinspires.ftc.teamcode.navigation.Gyro;
 
 /**
  * This op-mode runs the robot during the Driver Controlled Period.
  * It allows the robot to be driven, and for all the attachments to be controlled.
  */
-@TeleOp(name = "DriveHard", group = "Production")
-public class DriveHard extends OpMode{
+@TeleOp(name = "DriveHardS", group = "Production")
+public class DriveHardSquare extends OpMode{
     private ElapsedTime runtime = new ElapsedTime();
-    
-    private int MOTOR_TICKS_PER_360 = 1120;
-    private double GEAR_RATIO = 40/15.0;
-    private double TICKS_PER_360 = MOTOR_TICKS_PER_360 * GEAR_RATIO;
 
     private ShivaRobot robot = new ShivaRobot();
+    private Gyro gyro = new Gyro();
+
+    private final int MAX_SLIDES_POSITION = 4294;
+    private final int MIN_SLIDES_POSITION = 0;
+
+    private boolean slidesAreMoving = false;
     
     public void init() {
         // Initialize the robot interface
         robot.init(telemetry, hardwareMap);
+        gyro.init(robot);
+        gyro.quietMode = true;
+        robot.slides_motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.grip_servo.scaleRange(0.45, 1);
     }
 
     public void loop() {
         drive();
-        duckSpinner();
         slides();
+        grip();
+        boolean isTipping = gyro.isRobotTipping();
+        if (gyro.isRobotTipping()) {
+            stopTipping();
+        }
 
         telemetry();
+        telemetry.update();
     }
 
     // Move the robot
     private void drive() {
         // Mecanum drive is controlled with three axes: drive (front-and-back),
         // strafe (left-and-right), and twist (rotating the whole chassis).
-        double drive  = gamepad1.left_stick_y;
-        double twist = -gamepad1.right_stick_x / 2;
-        double strafe = -gamepad1.left_stick_x / 2;
+        double drive  = (gamepad1.left_stick_y*Math.abs(gamepad1.left_stick_y)) * 0.7;
+        double twist = -(gamepad1.right_stick_x*Math.abs(gamepad1.right_stick_x)) * 0.55;
+        double strafe = -gamepad1.left_stick_x*Math.abs(gamepad1.left_stick_x) / 2;
         
         if(gamepad1.dpad_up)
         {
@@ -53,19 +65,31 @@ public class DriveHard extends OpMode{
         }
         if(gamepad1.dpad_left)
         {
-            strafe = 0.4;
+            strafe = 0.5;
         }
         if(gamepad1.dpad_right)
         {
-            strafe = -0.4;
+            strafe = -0.5;
+
+        }
+        double [] speeds = {0, 0, 0, 0};
+        if(slidesAreMoving){
+            speeds = new double []{
+                -(drive + strafe + twist) / 2, //Front left power
+                -(drive - strafe - twist) / 2, //Front right power
+                -(drive - strafe + twist) / 2, //Back left power
+                -(drive + strafe - twist) / 2 //Back right power
+            };
+        }
+        else{
+            speeds = new double []{
+                -(drive + strafe + twist), //Front left power
+                -(drive - strafe - twist), //Front right power
+                -(drive - strafe + twist), //Back left power
+                -(drive + strafe - twist) //Back right power
+            };
         }
 
-        double[] speeds = {
-            -(drive + strafe + twist), //Front left power
-            -(drive - strafe - twist), //Front right power
-            -(drive - strafe + twist), //Back left power
-            -(drive + strafe - twist) //Back right power
-        };
 
 
         // Normalizes values
@@ -80,14 +104,6 @@ public class DriveHard extends OpMode{
             for (int i = 0; i < speeds.length; i++) speeds[i] /= max;
         }
         
-        // Reverse meaning of joystick if back button pressed to make it easier to
-        // navigate robot when dealing with the arm
-        if (gamepad1.right_bumper) {
-            for (int index = 0; index < 4; index++) {
-                speeds[index] *= -1;
-            }
-        }
-        
         // apply the calculated values to the motors.
         robot.front_left.setPower(speeds[0]);
         robot.front_right.setPower(speeds[1]);
@@ -100,31 +116,46 @@ public class DriveHard extends OpMode{
         robot.back_right.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
-    // Handle Duck Spinner controls
-    private void duckSpinner() {
-        robot.duck_motor.setPower(gamepad2.right_trigger);
-        robot.duck_motor.setPower(-gamepad2.left_trigger);
-    }
-
-    // Move the slides up and down and spin the intake motor
+    // Move the slides up and down
     private void slides() {
         robot.slides_motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        if(gamepad2.right_stick_y > 0 && robot.slides_motor.getCurrentPosition() <= 0) 
+        if(gamepad2.left_stick_y > 0  && robot.slides_motor.getCurrentPosition() <= MIN_SLIDES_POSITION) 
         {
-            robot.slides_motor.setPower(gamepad2.right_stick_y);
+            robot.slides_motor.setPower(gamepad2.left_stick_y);
+            slidesAreMoving = true; 
         }
     
-        else if(gamepad2.right_stick_y < 0 && robot.slides_motor.getCurrentPosition() >= -3150) 
+        else if(gamepad2.left_stick_y < 0  &&  robot.slides_motor.getCurrentPosition()  >= -MAX_SLIDES_POSITION) 
         {
-            robot.slides_motor.setPower(gamepad2.right_stick_y);
+            robot.slides_motor.setPower(gamepad2.left_stick_y);
+            slidesAreMoving = true;
         }
+        else if(gamepad2.dpad_up)
+        {
+            robot.slides_motor.setPower(0.5);
+            slidesAreMoving = true;
+        }
+        else if(gamepad2.dpad_down)
+        {
+            robot.slides_motor.setPower(0.5);
+            slidesAreMoving = true; 
+        }    
         else 
         {
             robot.slides_motor.setPower(0);
+            slidesAreMoving = false;
         }
-        
-        robot.intake_spinner.setPower(gamepad2.left_stick_y);        
+    }
+
+    //Move servo to grip cones
+    private void grip(){
+        if(gamepad2.a){
+            robot.grip_servo.setPosition(1);
+        }
+        if(gamepad2.b){
+            robot.grip_servo.setPosition(0);
+        }
     }
 
     // Display info on the driver station
@@ -133,6 +164,11 @@ public class DriveHard extends OpMode{
         telemetry.addData("Status", "Run Time: " + runtime.toString());
         
         telemetry.addData("Slide Motor", "Position: " + robot.slides_motor.getCurrentPosition());
+        telemetry.addData("Grip Servo", "Position: " + robot.grip_servo.getPosition());
         telemetry.addData("Test Encoder", "Ticks: " + robot.x_encoder.getCurrentPosition());
+    }
+
+    private void stopTipping () {
+        telemetry.addData("Maverick ", "Deploying Counter-Measures");
     }
 }
