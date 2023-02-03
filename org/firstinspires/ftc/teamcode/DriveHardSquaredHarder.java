@@ -32,7 +32,7 @@ public class DriveHardSquaredHarder extends OpMode{
         gyro.init(robot);
         gyro.quietMode = true;
         robot.slides_motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        robot.grip_servo.scaleRange(0.45, 1);
+        robot.grip_servo.scaleRange(0, 1);
     }
 
     public void loop() {
@@ -61,7 +61,7 @@ public class DriveHardSquaredHarder extends OpMode{
         // strafe (left-and-right), and twist (rotating the whole chassis).
         double drive  = (gamepad1.left_stick_y*Math.abs(gamepad1.left_stick_y)) * 0.7;
         double twist = -(gamepad1.right_stick_x*Math.abs(gamepad1.right_stick_x)) * 0.55;
-        double strafe = -gamepad1.left_stick_x*Math.abs(gamepad1.left_stick_x)* 0.7;
+        double strafe = -gamepad1.left_stick_x*Math.abs(gamepad1.left_stick_x)* 0.5;
         
         if(gamepad1.dpad_up)
         {
@@ -90,10 +90,10 @@ public class DriveHardSquaredHarder extends OpMode{
 
         if(slidesAreMoving){
             speeds = new double []{
-                -(drive + strafe + twist) / 2, //Front left power
-                -(drive - strafe - twist) / 2, //Front right power
-                -(drive - strafe + twist) / 2, //Back left power
-                -(drive + strafe - twist) / 2 //Back right power
+                -(drive + strafe + twist) * 0.75, //Front left power
+                -(drive - strafe - twist) *0.75, //Front right power
+                -(drive - strafe + twist)  *0.75, //Back left power
+                -(drive + strafe - twist) * 0.75//Back right power
             };
         }
         else{
