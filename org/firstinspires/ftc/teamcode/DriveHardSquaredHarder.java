@@ -90,10 +90,10 @@ public class DriveHardSquaredHarder extends OpMode{
 
         if(slidesAreMoving){
             speeds = new double []{
-                -(drive + strafe + twist) * 0.75, //Front left power
-                -(drive - strafe - twist) *0.75, //Front right power
-                -(drive - strafe + twist)  *0.75, //Back left power
-                -(drive + strafe - twist) * 0.75//Back right power
+                -(drive + strafe + twist), //Front left power
+                -(drive - strafe - twist), //Front right power
+                -(drive - strafe + twist), //Back left power
+                -(drive + strafe - twist)//Back right power
             };
         }
         else{
