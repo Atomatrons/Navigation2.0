@@ -24,7 +24,7 @@ public class DriveHardSquaredHarder extends OpMode{
     private final int MIN_SLIDES_POSITION = 0;
 
     private boolean slidesAreMoving = false;
-    private boolean fieldOriendtedDrive = true;
+    private boolean fieldOriendtedDrive = false;
     
     public void init() {
         // Initialize the robot interface
@@ -45,10 +45,11 @@ public class DriveHardSquaredHarder extends OpMode{
         }
 
         if (gamepad1.y) {
-            fieldOriendtedDrive = !fieldOriendtedDrive;
-            if (fieldOriendtedDrive) {
-                gyro.resetAngles();
-            }
+            fieldOriendtedDrive = true;
+            gyro.resetAngles();
+        }
+        else if (gamepad1.x){
+            fieldOriendtedDrive =false;
         }
 
         telemetry();
@@ -59,8 +60,8 @@ public class DriveHardSquaredHarder extends OpMode{
     private void drive() {
         // Mecanum drive is controlled with three axes: drive (front-and-back),
         // strafe (left-and-right), and twist (rotating the whole chassis).
-        double drive  = (gamepad1.left_stick_y*Math.abs(gamepad1.left_stick_y)) * 0.7;
-        double twist = -(gamepad1.right_stick_x*Math.abs(gamepad1.right_stick_x)) * 0.55;
+        double drive  = (gamepad1.left_stick_y*Math.abs(gamepad1.left_stick_y)) * 0.8;
+        double twist = -(gamepad1.right_stick_x*Math.abs(gamepad1.right_stick_x)) * 0.60;
         double strafe = -gamepad1.left_stick_x*Math.abs(gamepad1.left_stick_x)* 0.5;
         
         if(gamepad1.dpad_up)
@@ -90,10 +91,10 @@ public class DriveHardSquaredHarder extends OpMode{
 
         if(slidesAreMoving){
             speeds = new double []{
-                -(drive + strafe + twist) * 0.75, //Front left power
-                -(drive - strafe - twist) *0.75, //Front right power
-                -(drive - strafe + twist)  *0.75, //Back left power
-                -(drive + strafe - twist) * 0.75//Back right power
+                -(drive + strafe + twist), //Front left power
+                -(drive - strafe - twist), //Front right power
+                -(drive - strafe + twist), //Back left power
+                -(drive + strafe - twist)//Back right power
             };
         }
         else{
@@ -104,8 +105,6 @@ public class DriveHardSquaredHarder extends OpMode{
                 -(drive + strafe - twist) //Back right power
             };
         }
-
-
 
         // Normalizes values
         double max = Math.abs(speeds[0]);
@@ -144,31 +143,37 @@ public class DriveHardSquaredHarder extends OpMode{
     private void slides() {
         robot.slides_motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        if(gamepad2.left_stick_y > 0  && robot.slides_motor.getCurrentPosition() <= MIN_SLIDES_POSITION) 
-        {
+        if(gamepad2.x){
             robot.slides_motor.setPower(gamepad2.left_stick_y*Math.abs(gamepad2.left_stick_y));
-            slidesAreMoving = true; 
         }
-    
-        else if(gamepad2.left_stick_y < 0  &&  robot.slides_motor.getCurrentPosition()  >= -MAX_SLIDES_POSITION) 
-        {
-            robot.slides_motor.setPower(gamepad2.left_stick_y*Math.abs(gamepad2.left_stick_y));
-            slidesAreMoving = true;
-        }
-        else if(gamepad2.dpad_up)
-        {
-            robot.slides_motor.setPower(0.5);
-            slidesAreMoving = true;
-        }
-        else if(gamepad2.dpad_down)
-        {
-            robot.slides_motor.setPower(0.5);
-            slidesAreMoving = true; 
-        }    
-        else 
-        {
-            robot.slides_motor.setPower(0);
-            slidesAreMoving = false;
+        else{
+
+            if(gamepad2.left_stick_y > 0  && robot.slides_motor.getCurrentPosition() <= MIN_SLIDES_POSITION) 
+            {
+                robot.slides_motor.setPower(gamepad2.left_stick_y*Math.abs(gamepad2.left_stick_y));
+                slidesAreMoving = true; 
+            }
+        
+            else if(gamepad2.left_stick_y < 0  &&  robot.slides_motor.getCurrentPosition()  >= -MAX_SLIDES_POSITION) 
+            {
+                robot.slides_motor.setPower(gamepad2.left_stick_y*Math.abs(gamepad2.left_stick_y));
+                slidesAreMoving = true;
+            }
+            else if(gamepad2.dpad_up)
+            {
+                robot.slides_motor.setPower(0.5);
+                slidesAreMoving = true;
+            }
+            else if(gamepad2.dpad_down)
+            {
+                robot.slides_motor.setPower(0.5);
+                slidesAreMoving = true; 
+            }    
+            else 
+            {
+                robot.slides_motor.setPower(0);
+                slidesAreMoving = false;
+            }
         }
     }
 
@@ -186,6 +191,7 @@ public class DriveHardSquaredHarder extends OpMode{
     private void telemetry() {
         telemetry.addData("Running", "Loop");
         telemetry.addData("Status", "Run Time: " + runtime.toString());
+        telemetry.addData("Mode", "Is Field Oriented: " + fieldOriendtedDrive);
         
         telemetry.addData("Slide Motor", "Position: " + robot.slides_motor.getCurrentPosition());
         telemetry.addData("Grip Servo", "Position: " + robot.grip_servo.getPosition());
