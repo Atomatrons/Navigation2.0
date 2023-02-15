@@ -128,7 +128,7 @@ public class DriveHardSquaredHarder extends OpMode{
         robot.front_left.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         robot.back_left.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         robot.front_right.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        robot.back_right.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE;
+        robot.back_right.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
     public double[] rotateVector(double x, double y, double angle) {
