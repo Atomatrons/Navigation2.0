@@ -45,11 +45,10 @@ public class DriveHardSquaredHarder extends OpMode{
         }
 
         if (gamepad1.y) {
-            fieldOriendtedDrive = true;
-            gyro.resetAngles();
-        }
-        else if (gamepad1.x){
-            fieldOriendtedDrive =false;
+            fieldOriendtedDrive = !fieldOriendtedDrive;
+            if (fieldOriendtedDrive) {
+                gyro.resetAngles();
+            }
         }
 
         telemetry();
@@ -60,8 +59,8 @@ public class DriveHardSquaredHarder extends OpMode{
     private void drive() {
         // Mecanum drive is controlled with three axes: drive (front-and-back),
         // strafe (left-and-right), and twist (rotating the whole chassis).
-        double drive  = (gamepad1.left_stick_y*Math.abs(gamepad1.left_stick_y)) * 0.8;
-        double twist = -(gamepad1.right_stick_x*Math.abs(gamepad1.right_stick_x)) * 0.60;
+        double drive  = (gamepad1.left_stick_y*Math.abs(gamepad1.left_stick_y)) * 0.7;
+        double twist = -(gamepad1.right_stick_x*Math.abs(gamepad1.right_stick_x)) * 0.55;
         double strafe = -gamepad1.left_stick_x*Math.abs(gamepad1.left_stick_x)* 0.5;
         
         if(gamepad1.dpad_up)
@@ -91,10 +90,10 @@ public class DriveHardSquaredHarder extends OpMode{
 
         if(slidesAreMoving){
             speeds = new double []{
-                -(drive + strafe + twist), //Front left power
-                -(drive - strafe - twist), //Front right power
-                -(drive - strafe + twist), //Back left power
-                -(drive + strafe - twist)//Back right power
+                -(drive + strafe + twist) * 0.75, //Front left power
+                -(drive - strafe - twist) *0.75, //Front right power
+                -(drive - strafe + twist)  *0.75, //Back left power
+                -(drive + strafe - twist) * 0.75//Back right power
             };
         }
         else{
